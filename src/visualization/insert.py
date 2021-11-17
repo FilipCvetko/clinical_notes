@@ -2,14 +2,23 @@ import airtable
 import pandas as pd
 import streamlit as st
 
+
 def insert_app():
     with open("./data/raw/specializacije.txt", "r") as file:
         specializacije = [line.strip() for line in file.readlines()]
 
-    klinicni_primeri = airtable.Airtable(st.secrets["AIRTABLE_BASE_ID"], "klinicni_primeri", st.secrets["AIRTABLE_API_KEY"])
+    klinicni_primeri = airtable.Airtable(
+        st.secrets["AIRTABLE_BASE_ID"], "klinicni_primeri", st.secrets["AIRTABLE_API_KEY"]
+    )
 
     predloge = airtable.Airtable(
-        base_id=st.secrets["AIRTABLE_BASE_ID"], table_name="specializacije_predloge", api_key=st.secrets["AIRTABLE_API_KEY"]
+        base_id=st.secrets["AIRTABLE_BASE_ID"],
+        table_name="specializacije_predloge",
+        api_key=st.secrets["AIRTABLE_API_KEY"],
+    )
+
+    pomoč = airtable.Airtable(
+        base_id=st.secrets["AIRTABLE_BASE_ID"], table_name="pomoč", api_key=st.secrets["AIRTABLE_API_KEY"]
     )
 
     icd10 = pd.read_csv("./data/raw/icd10.csv")
@@ -45,4 +54,11 @@ def insert_app():
             st.balloons()
 
         if st.button("Pomoč"):
-            st.write("Pomoč na poti")
+            najdena_pomoč = pomoč.search("Specializacija", izbrana_specializacija)
+            if len(najdena_pomoč) == 0:
+                st.write(
+                    "Trenutno še ni spisane predloge za to specializacijo.\n Lahko pa pomagaš pri soustvaritvi: \n https://airtable.com/appfquHGRiLr47uFk/tblV9kOjOqJwzsR7Z/viwxVCWilSrHVRahy?blocks=hide"
+                )
+            else:
+                najdena_pomoč = najdena_pomoč[0]["fields"]["Vsebina"]
+                st.wrote(najdena_pomoč)
