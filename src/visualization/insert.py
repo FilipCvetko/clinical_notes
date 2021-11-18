@@ -2,7 +2,6 @@ import airtable
 import pandas as pd
 import streamlit as st
 
-
 def insert_app():
     with open("./data/raw/specializacije.txt", "r") as file:
         specializacije = [line.strip() for line in file.readlines()]
@@ -61,4 +60,4 @@ def insert_app():
                 )
             else:
                 najdena_pomoč = najdena_pomoč[0]["fields"]["Vsebina"]
-                st.wrote(najdena_pomoč)
+                st.write(najdena_pomoč)
